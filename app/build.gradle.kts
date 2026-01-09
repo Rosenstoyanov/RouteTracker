@@ -17,12 +17,14 @@ android {
 
     defaultConfig {
         applicationId = "com.modeshift.routetracker"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL", "\"https://ivusubscribe.azurewebsites.net/api/\"")
     }
 
     buildTypes {
@@ -45,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -96,6 +99,14 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime)
+
+    //    Google
+    implementation(libs.google.location)
+    implementation(libs.google.maps)
+    implementation(libs.google.mapsUtils)
+
+    // Timber
+    implementation(libs.timber)
 
     // Test
     testImplementation(libs.junit)

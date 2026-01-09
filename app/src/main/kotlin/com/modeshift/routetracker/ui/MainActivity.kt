@@ -1,4 +1,4 @@
-package com.modeshift.routetracker
+package com.modeshift.routetracker.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,9 +11,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.modeshift.routetracker.ui.theme.RouteTrackerTheme
+import com.modeshift.routetracker.core.ui.theme.RouteTrackerTheme
+import com.modeshift.routetracker.navigation.Navigator
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var navigator: Navigator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

@@ -18,6 +18,9 @@ kotlin-serialization = "1.9.0"
 androidx-lifecycle-compose = "2.10.0"
 androidx-work-manager = "2.11.0"
 splashscreen = "1.2.0"
+timber = "5.0.1"
+playServicesLocation = "21.3.0"
+maps = "7.0.0"
 
 [libraries]
 # AndroidX
@@ -66,7 +69,7 @@ jetbrains-kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = 
 # Serialization
 jetbrains-kotlin-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 
-# ktor
+# Ktor
 ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktorBom" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core" }
 ktor-client-engine-okhttp = { group = "io.ktor", name = "ktor-client-okhttp" }
@@ -74,6 +77,14 @@ ktor-client-plugin-logging = { group = "io.ktor", name = "ktor-client-logging" }
 ktor-client-plugin-contentNegotiation = { group = "io.ktor", name = "ktor-client-content-negotiation" }
 ktor-client-plugin-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
 ktor-client-plugin-contentEncoding = { group = "io.ktor", name = "ktor-client-encoding" }
+
+#Google
+google-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+google-maps = { module = "com.google.maps.android:maps-compose", version.ref = "maps" }
+google-mapsUtils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "maps" }
+
+# Timber
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
