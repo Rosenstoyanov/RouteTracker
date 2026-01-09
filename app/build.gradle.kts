@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":database"))
     // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -68,11 +69,6 @@ dependencies {
     // ViewModel
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
 
     // Hilt
     implementation(libs.hilt.android)
@@ -100,7 +96,7 @@ dependencies {
     // WorkManager
     implementation(libs.androidx.work.runtime)
 
-    //    Google
+    // Google
     implementation(libs.google.location)
     implementation(libs.google.maps)
     implementation(libs.google.mapsUtils)

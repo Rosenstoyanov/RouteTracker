@@ -1,4 +1,4 @@
-package com.modeshift.routetracker.core.location
+package com.modeshift.routetracker.location
 
 import android.Manifest
 import android.content.Context

@@ -1,7 +1,7 @@
 [versions]
 agp = "8.13.2"
-kotlin = "2.3.0"
-ksp = "2.3.4"
+kotlin = "2.2.21"
+ksp = "2.2.21-2.0.4"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -61,6 +61,14 @@ hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.r
 hilt-ext-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltExt" }
 hilt-ext-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
 
+#Google
+google-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+google-maps = { module = "com.google.maps.android:maps-compose", version.ref = "maps" }
+google-mapsUtils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "maps" }
+
+# Timber
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
 # Jetbrains
 # Coroutines
 jetbrains-kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
@@ -78,19 +86,12 @@ ktor-client-plugin-contentNegotiation = { group = "io.ktor", name = "ktor-client
 ktor-client-plugin-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
 ktor-client-plugin-contentEncoding = { group = "io.ktor", name = "ktor-client-encoding" }
 
-#Google
-google-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
-google-maps = { module = "com.google.maps.android:maps-compose", version.ref = "maps" }
-google-mapsUtils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "maps" }
-
-# Timber
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 

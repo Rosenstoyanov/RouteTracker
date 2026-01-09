@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "RouteTracker"
 include(":app")
- 
+include(":database")

@@ -1,4 +1,4 @@
-package com.modeshift.routetracker.core.location.di
+package com.modeshift.routetracker.location.di
 
 import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
