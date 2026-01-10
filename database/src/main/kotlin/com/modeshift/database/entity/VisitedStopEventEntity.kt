@@ -1,0 +1,28 @@
+package com.modeshift.database.entity
+
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.modeshift.models.EventType
+import com.modeshift.models.Location
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+
+@Entity(tableName = "VisitedStopEvents")
+@OptIn(ExperimentalTime::class)
+data class VisitedStopEventEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long,
+    @ColumnInfo("app_user")
+    val appUser: String,
+    @ColumnInfo("stop_id")
+    val stopId: String,
+    @Embedded(prefix = "location_")
+    val location: Location,
+    @ColumnInfo("eventDateTime")
+    val eventDateTime: Instant,
+    @ColumnInfo("evenType")
+    val evenType: EventType
+)

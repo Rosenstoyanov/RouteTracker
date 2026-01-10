@@ -1,9 +1,9 @@
 package com.modeshift.routetracker.core
 
 import androidx.lifecycle.ViewModel
+import com.modeshift.routetracker.core.extensions.updateAndLog
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
 abstract class BaseViewModel<UiState, Action>(
     initialState: UiState
@@ -12,7 +12,7 @@ abstract class BaseViewModel<UiState, Action>(
     val uiState: StateFlow<UiState> = _uiState
 
     protected fun updateState(stateUpdate: (UiState) -> UiState) {
-        _uiState.update { stateUpdate(it) }
+        _uiState.updateAndLog { stateUpdate(it) }
     }
 
     open fun onAction(action: Action) {}

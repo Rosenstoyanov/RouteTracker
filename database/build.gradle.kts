@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    api(project(":core:models"))
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

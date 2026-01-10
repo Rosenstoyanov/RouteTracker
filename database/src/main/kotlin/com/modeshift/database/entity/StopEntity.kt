@@ -1,11 +1,13 @@
 package com.modeshift.database.entity
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.modeshift.models.Location
 
 @Entity(tableName = "Stops")
-data class StopsEntity(
+data class StopEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long,
@@ -13,10 +15,8 @@ data class StopsEntity(
     val routeId: Long,
     @ColumnInfo(name = "name")
     val name: String,
-    @ColumnInfo(name = "latitude")
-    val latitude: Double,
-    @ColumnInfo(name = "longitude")
-    val longitude: Double,
+    @Embedded(prefix = "location_")
+    val location: Location,
     @ColumnInfo(name = "radius")
     val radius: Long
 )

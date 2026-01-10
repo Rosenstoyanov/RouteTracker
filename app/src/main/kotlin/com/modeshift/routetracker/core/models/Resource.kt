@@ -1,48 +1,50 @@
 package com.modeshift.routetracker.core.models
 
+import com.modeshift.routetracker.core.models.Resource.Failure
+import com.modeshift.routetracker.core.models.Resource.Success
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 // TODO: Ross update errors to handle well localisation
-sealed class Resource<T> {
-    data class Success<T>(val data: T) : Resource<T>()
-    data class Error<T>(val message: String) : Resource<T>()
+sealed class Resource<out T> {
+    data class Success<out T>(val data: T) : Resource<T>()
+    data class Failure(val message: String) : Resource<Nothing>()
 }
 
 inline fun <T, R> Resource<T>.map(
     transformSuccess: (T) -> R,
 ): Resource<R> {
     return when (this) {
-        is Resource.Success -> Resource.Success(transformSuccess(this.data))
-        is Resource.Error -> Resource.Error(this.message)
+        is Success -> Success(transformSuccess(this.data))
+        is Failure -> Failure(this.message)
     }
 }
 
 inline fun <T, R> Resource<T>.flatMap(transform: (T) -> Resource<R>): Resource<R> {
     return when (this) {
-        is Resource.Success -> transform(this.data)
-        is Resource.Error -> Resource.Error(this.message)
+        is Success -> transform(this.data)
+        is Failure -> Failure(this.message)
     }
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T> Resource<T>.onFailure(action: (exception: Resource.Error<T>) -> Unit): Resource<T> {
+inline fun <T> Resource<T>.onFailure(action: (exception: Failure) -> Unit): Resource<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
-    (this as? Resource.Error<T>)?.let {
+    (this as? Failure)?.let {
         action(it)
     }
     return this
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T> Resource<T>.onSuccess(action: (value: Resource.Success<T>) -> Unit): Resource<T> {
+inline fun <T> Resource<T>.onSuccess(action: (value: Success<T>) -> Unit): Resource<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
     }
-    (this as? Resource.Success<T>)?.let {
+    (this as? Success<T>)?.let {
         action(it)
     }
     return this

@@ -17,7 +17,7 @@ class HttpRequestExecutor(
         block: HttpRequestBuilder.() -> Unit,
     ): Resource<Data> {
         if (!networkConnectionMonitor.isConnected()) {
-            return Resource.Error("No internet connection")
+            return Resource.Failure("No internet connection")
         }
 
         return try {
@@ -25,7 +25,7 @@ class HttpRequestExecutor(
             Resource.Success(response.body())
         } catch (exception: Exception) {
             Timber.e(exception)
-            Resource.Error("Something went wrong")
+            Resource.Failure("Something went wrong")
         }
     }
 }
