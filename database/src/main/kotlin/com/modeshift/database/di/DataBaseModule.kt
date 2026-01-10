@@ -1,9 +1,8 @@
 package com.modeshift.database.di
 
 import android.content.Context
-import android.os.Debug
 import androidx.room.Room
-import com.modeshift.database.RemoteTrackerDatabase
+import com.modeshift.database.RouteTrackerDatabase
 import com.modeshift.database.dao.RoutesDao
 import com.modeshift.database.dao.StopsDao
 import dagger.Module
@@ -19,10 +18,10 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideLoggingDatabase(@ApplicationContext context: Context): RemoteTrackerDatabase {
+    fun provideLoggingDatabase(@ApplicationContext context: Context): RouteTrackerDatabase {
         val builder = Room.databaseBuilder(
             context = context,
-            klass = RemoteTrackerDatabase::class.java,
+            klass = RouteTrackerDatabase::class.java,
             name = "remote_tracker.db"
         )
 
@@ -35,13 +34,13 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideRoutesDao(db: RemoteTrackerDatabase): RoutesDao {
+    fun provideRoutesDao(db: RouteTrackerDatabase): RoutesDao {
         return db.RoutesDao()
     }
 
     @Singleton
     @Provides
-    fun provideStopsDao(db: RemoteTrackerDatabase): StopsDao {
+    fun provideStopsDao(db: RouteTrackerDatabase): StopsDao {
         return db.StopsDao()
     }
 }

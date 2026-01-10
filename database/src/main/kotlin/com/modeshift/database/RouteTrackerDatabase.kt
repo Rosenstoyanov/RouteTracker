@@ -12,7 +12,7 @@ import com.modeshift.database.entity.StopsEntity
     version = 1,
     exportSchema = true,
 )
-abstract class RemoteTrackerDatabase : RoomDatabase() {
+abstract class RouteTrackerDatabase : RoomDatabase() {
     abstract fun RoutesDao(): RoutesDao
     abstract fun StopsDao(): StopsDao
 }

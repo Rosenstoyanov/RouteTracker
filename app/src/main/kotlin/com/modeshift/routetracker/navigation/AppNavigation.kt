@@ -6,6 +6,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.modeshift.routetracker.navigation.LoginDestination.login
+import com.modeshift.routetracker.navigation.RouteSelectionDestination.routeSelection
+import com.modeshift.routetracker.navigation.RouteTrackingDestination.routeTracking
 import timber.log.Timber
 
 @Composable
@@ -31,6 +34,8 @@ fun AppNavigation(
         modifier = modifier,
         startDestination = startDestination,
     ) {
-
+        login()
+        routeSelection()
+        routeTracking()
     }
 }

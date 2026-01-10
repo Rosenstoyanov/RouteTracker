@@ -4,16 +4,32 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.modeshift.routetracker.core.ui.theme.RouteTrackerTheme
+import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
+import com.modeshift.routetracker.core.AppUserNameStore
+import com.modeshift.routetracker.core.BaseViewModel
+import com.modeshift.routetracker.core.ui.theme.RtTheme
+import com.modeshift.routetracker.core.ui.utils.ObserveAsEvents
+import com.modeshift.routetracker.di.annotations.AppScope
+import com.modeshift.routetracker.navigation.AppNavigation
+import com.modeshift.routetracker.navigation.NavDirection.GoBack
+import com.modeshift.routetracker.navigation.NavDirection.NavigateTo
+import com.modeshift.routetracker.navigation.NavTarget
+import com.modeshift.routetracker.navigation.NavTarget.Companion.withCleanStack
+import com.modeshift.routetracker.navigation.NavTarget.Login
+import com.modeshift.routetracker.navigation.NavTarget.RouteTracking
 import com.modeshift.routetracker.navigation.Navigator
+import com.modeshift.routetracker.ui.AppViewModel.AppState.Initialized
+import com.modeshift.routetracker.ui.AppViewModel.AppState.Initializing
+import com.modeshift.routetracker.ui.AppViewModel.AppUiState
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,35 +37,75 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var navigator: Navigator
+    private val viewModel: AppViewModel by viewModels()
+
+    private var isInitialising = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        installSplashScreen().setKeepOnScreenCondition { isInitialising }
         setContent {
-            RouteTrackerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+            RtTheme {
+                val navController = rememberNavController()
+                ObserveAsEvents(navigator.directions) {
+                    if (it == navController.currentDestination) {
+                        return@ObserveAsEvents
+                    }
+
+                    when (it) {
+                        GoBack -> navController.popBackStack()
+                        is NavigateTo -> navController.navigate(
+                            route = it.target,
+                            builder = it.builder
+                        )
+                    }
                 }
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                LaunchedEffect(uiState.appState) {
+                    when (val appState = uiState.appState) {
+                        is Initialized -> {
+                            navController.navigate(
+                                route = appState.target,
+                                builder = withCleanStack()
+                            )
+                            isInitialising = false
+                        }
+
+                        Initializing -> isInitialising = true
+                    }
+                }
+
+                AppNavigation(
+                    navController = navController,
+                    startDestination = Login
+                )
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+@HiltViewModel
+class AppViewModel @Inject constructor(
+    private val appUserNameStore: AppUserNameStore,
+    @AppScope
+    private val appScope: CoroutineScope
+) : BaseViewModel<AppUiState, Unit>(AppUiState()) {
+    init {
+        appScope.launch {
+            val target = appUserNameStore.loadAppUserName()?.let { RouteTracking } ?: Login
+            updateState {
+                it.copy(appState = Initialized(target))
+            }
+        }
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RouteTrackerTheme {
-        Greeting("Android")
+    data class AppUiState(
+        val appState: AppState = Initializing
+    )
+
+    sealed interface AppState {
+        data object Initializing : AppState
+        data class Initialized(val target: NavTarget) : AppState
     }
 }

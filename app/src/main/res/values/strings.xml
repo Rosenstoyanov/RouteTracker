@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">RouteTracker</string>
+
+<!--    UserNameScreen-->
+    <string name="user_name_hint">Username</string>
+    <string name="login">Log In</string>
 </resources>
