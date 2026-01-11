@@ -9,7 +9,7 @@ import com.modeshift.database.entity.StopEntity
 
 @Dao
 interface StopsDao {
-    @Query("SELECT * FROM Routes")
+    @Query("SELECT * FROM Stops")
     suspend fun getAllStops(): List<StopEntity>
 
     @Insert

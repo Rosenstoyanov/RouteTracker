@@ -1,4 +1,4 @@
-package com.modeshift.routetracker.core
+package com.modeshift.routetracker.data.store
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

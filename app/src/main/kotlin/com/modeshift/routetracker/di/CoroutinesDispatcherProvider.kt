@@ -6,9 +6,15 @@ import javax.inject.Inject
 
 data class CoroutinesDispatcherProvider(
     val main: CoroutineDispatcher,
+    val mainImmediate: CoroutineDispatcher,
     val computation: CoroutineDispatcher,
     val io: CoroutineDispatcher,
 ) {
     @Inject
-    constructor() : this(Dispatchers.Main, Dispatchers.Default, Dispatchers.IO)
+    constructor() : this(
+        main = Dispatchers.Main,
+        mainImmediate = Dispatchers.Main.immediate,
+        computation = Dispatchers.Default,
+        io = Dispatchers.IO
+    )
 }

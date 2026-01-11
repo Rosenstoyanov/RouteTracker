@@ -4,4 +4,7 @@
 <!--    UserNameScreen-->
     <string name="user_name_hint">Username</string>
     <string name="login">Log In</string>
+    <string name="select_route">Select Route</string>
+    <string name="tracking">Tracking</string>
+    <string name="no_route_selected">No route selected</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.modeshift.routetracker.ui.login
 
 import androidx.lifecycle.viewModelScope
-import com.modeshift.routetracker.core.AppUserNameStore
+import com.modeshift.routetracker.data.store.AppUserNameStore
 import com.modeshift.routetracker.core.BaseViewModel
 import com.modeshift.routetracker.navigation.NavTarget.Companion.withCleanStack
 import com.modeshift.routetracker.navigation.NavTarget.RouteTracking

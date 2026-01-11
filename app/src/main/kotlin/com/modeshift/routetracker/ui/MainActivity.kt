@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.modeshift.routetracker.core.AppUserNameStore
+import com.modeshift.routetracker.data.store.AppUserNameStore
 import com.modeshift.routetracker.core.BaseViewModel
 import com.modeshift.routetracker.core.ui.theme.RtTheme
 import com.modeshift.routetracker.core.ui.utils.ObserveAsEvents
