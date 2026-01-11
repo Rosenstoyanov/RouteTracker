@@ -2,7 +2,7 @@ package com.modeshift.routetracker.data.store
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -16,18 +16,18 @@ class ActiveRouteStore @Inject constructor(
     @ApplicationContext
     private val context: Context
 ) {
-    private val routeIdKey = stringPreferencesKey("active_route_id")
+    private val routeIdKey = longPreferencesKey("active_route_id")
     private val Context.activeRouteIdDataStore by preferencesDataStore(
         name = "active_route_id_datastore"
     )
 
-    suspend fun storeRouteId(routeId: String) {
+    suspend fun storeRouteId(routeId: Long) {
         context.activeRouteIdDataStore.edit {
             it[routeIdKey] = routeId
         }
     }
 
-    fun routeIdFlow(): Flow<String> {
+    fun routeIdFlow(): Flow<Long> {
         return context.activeRouteIdDataStore.data.map {
             it[routeIdKey]
         }.filterNotNull()

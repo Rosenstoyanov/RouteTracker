@@ -17,6 +17,7 @@ import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.Route
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.SelectRoute
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.StartRoute
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.StopRoute
+import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.ShowMessage
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -34,7 +35,7 @@ class RouteTrackingViewModel @Inject constructor(
 
     private val _events = Channel<RouteTrackingEvent>()
     val events = _events.receiveAsFlow()
-    
+
     init {
         loadData()
     }
@@ -48,7 +49,7 @@ class RouteTrackingViewModel @Inject constructor(
                         .onSuccess { result ->
                             updateState { it.copy(stopPins = result.data.map { it.toStopPin() }) }
                         }.onFailure { error ->
-                            updateState { it.copy(error = error.message) }
+                            _events.trySend(ShowMessage(error.message))
                         }
                 }
                 launch {
@@ -56,7 +57,7 @@ class RouteTrackingViewModel @Inject constructor(
                         .onSuccess { result ->
                             updateState { it.copy(routes = result.data) }
                         }.onFailure { error ->
-                            updateState { it.copy(error = error.message) }
+                            _events.trySend(ShowMessage(error.message))
                         }
                 }
             }
@@ -79,7 +80,6 @@ class RouteTrackingViewModel @Inject constructor(
         val stopPins: List<StopPin> = emptyList(),
         val selectedRoute: Route? = null,
         val isLoading: Boolean = false,
-        val error: String? = null,
     )
 
     sealed interface RouteTrackingAction {
