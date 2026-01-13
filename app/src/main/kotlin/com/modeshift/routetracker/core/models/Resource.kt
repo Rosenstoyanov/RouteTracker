@@ -6,7 +6,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-// TODO: Ross update errors to handle well localisation
+// TODO: update Failure argument to handle well localisation
 sealed class Resource<out T> {
     data class Success<out T>(val data: T) : Resource<T>()
     data class Failure(val message: String) : Resource<Nothing>()

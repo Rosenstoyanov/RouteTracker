@@ -5,6 +5,7 @@ import com.modeshift.routetracker.core.network.status.NetworkConnectionMonitor
 import com.modeshift.routetracker.core.network.status.NetworkConnectionStatus
 import com.modeshift.routetracker.di.CoroutinesDispatcherProvider
 import com.modeshift.routetracker.domain.RouteTrackerRepository
+import com.modeshift.routetracker.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -41,7 +42,7 @@ class StopEventsSyncExecutor @Inject constructor(
                     networkConnectionMonitor.networkConnectionStatus
                         .flatMapLatest { status ->
                             if (status is NetworkConnectionStatus.Connected) {
-                                repository.visitedStopEventsFlow(100)
+                                repository.visitedStopEventsFlow(Constants.STOP_EVENTS_UPLOAD_BATCH_SIZE)
                             } else {
                                 emptyFlow()
                             }
@@ -64,7 +65,7 @@ class StopEventsSyncExecutor @Inject constructor(
             syncJob = coroutineContext[Job]
 
             try {
-                repository.visitedStopEventsFlow(100)
+                repository.visitedStopEventsFlow(Constants.STOP_EVENTS_UPLOAD_BATCH_SIZE)
                     .transformWhile { events ->
                         emit(events)
                         events.isNotEmpty()

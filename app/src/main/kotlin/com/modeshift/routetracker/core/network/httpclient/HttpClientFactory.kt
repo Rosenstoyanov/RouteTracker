@@ -1,5 +1,7 @@
 package com.modeshift.routetracker.core.network.httpclient
 
+import com.modeshift.routetracker.utils.Constants.NETWORK_CALL_TIMEOUT_IN_SECONDS
+import com.modeshift.routetracker.utils.Constants.NETWORK_CONNECT_TIMEOUT_IN_SECONDS
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
@@ -49,8 +51,9 @@ object HttpClientFactory {
             }
 
             install(HttpTimeout) {
-                requestTimeoutMillis = 10_000
-                connectTimeoutMillis = 3_000
+                requestTimeoutMillis = NETWORK_CALL_TIMEOUT_IN_SECONDS.seconds.inWholeMilliseconds
+                connectTimeoutMillis =
+                    NETWORK_CONNECT_TIMEOUT_IN_SECONDS.seconds.inWholeMilliseconds
             }
 
             install(Logging) {
@@ -72,8 +75,8 @@ object HttpClientFactory {
 
     fun createDefaultEngine(): HttpClientEngine = OkHttp.create {
         config {
-            callTimeout(10.seconds.toJavaDuration())
-            connectTimeout(3.seconds.toJavaDuration())
+            callTimeout(NETWORK_CALL_TIMEOUT_IN_SECONDS.seconds.toJavaDuration())
+            connectTimeout(NETWORK_CONNECT_TIMEOUT_IN_SECONDS.seconds.toJavaDuration())
         }
     }
 }

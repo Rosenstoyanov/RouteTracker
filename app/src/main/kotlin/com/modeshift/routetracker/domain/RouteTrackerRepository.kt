@@ -20,5 +20,5 @@ interface RouteTrackerRepository {
     suspend fun getVisitedStopEvents(): List<VisitedStopEvent>
     suspend fun sendVisitedStopEvents(visitedStopEvents: List<VisitedStopEvent>): Resource<Unit>
     suspend fun trackVisitedStopEvent(visitedStopEvents: VisitedStopEvent)
-    suspend fun visitedStopEventsFlow(limit: Long): Flow<List<VisitedStopEvent>>
+    suspend fun visitedStopEventsFlow(limit: Int): Flow<List<VisitedStopEvent>>
 }

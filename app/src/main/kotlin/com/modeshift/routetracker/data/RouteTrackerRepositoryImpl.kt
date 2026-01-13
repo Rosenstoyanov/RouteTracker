@@ -91,7 +91,7 @@ class RouteTrackerRepositoryImpl @Inject constructor(
         localDataSource.trackVisitedStopEvent(visitedStopEvents)
     }
 
-    override suspend fun visitedStopEventsFlow(limit: Long): Flow<List<VisitedStopEvent>> {
+    override suspend fun visitedStopEventsFlow(limit: Int): Flow<List<VisitedStopEvent>> {
         return localDataSource.visitedStopEventsFlow(limit).map { it.map { it.toModel() } }
     }
 }

@@ -70,7 +70,7 @@ class LocalDataSource @Inject constructor(
         return visitedStopEventsDao.getAll()
     }
 
-    fun visitedStopEventsFlow(limit: Long): Flow<List<VisitedStopEventEntity>> {
+    fun visitedStopEventsFlow(limit: Int): Flow<List<VisitedStopEventEntity>> {
         return visitedStopEventsDao.visitedStopEventsFlow(limit)
     }
 

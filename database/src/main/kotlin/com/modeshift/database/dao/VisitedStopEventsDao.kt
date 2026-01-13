@@ -21,7 +21,7 @@ interface VisitedStopEventsDao {
     suspend fun delete(visitedStopEvents: List<VisitedStopEventEntity>)
 
     @Query("SELECT * FROM VisitedStopEvents ORDER BY event_date_time DESC LIMIT :limit")
-    fun visitedStopEventsFlow(limit: Long): Flow<List<VisitedStopEventEntity>>
+    fun visitedStopEventsFlow(limit: Int): Flow<List<VisitedStopEventEntity>>
 
     @Query("UPDATE VisitedStopEvents SET failure_count = failure_count + 1 WHERE id IN (:ids)")
     suspend fun incrementFailureCount(ids: List<Long>)

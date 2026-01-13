@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class LocationTrackingService : LifecycleService() {
@@ -54,17 +55,16 @@ class LocationTrackingService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         setForeground()
 
-        // TODO: Can extract deltaRadiusInMeters and delta distance for significantChange in constants
-        // TODO: if it is required check for mock location
+        // TODO: If it is required check for mock location
         if (!isRunning) {
             isRunning = true
             locationServiceStateEmitter.updateState(Running)
             lifecycleScope.launch(dispatcherProvider.io) {
-                locationProvider.getLocationUpdates(1000)
-                    .buffer(capacity = 100)
+                locationProvider.getLocationUpdates(Constants.LOCATION_UPDATE_INTERVAL_IN_SECONDS.seconds.inWholeMilliseconds)
+                    .buffer(capacity = Constants.LOCATION_UPDATE_BUFFER_CAPACITY)
                     .filter { currentLocation ->
                         lastLocation?.distanceTo(currentLocation)?.let {
-                            it >= 200f
+                            it >= Constants.HAS_SIGNIFICANT_LOCATION_CHANGE_DELTA_IN_METERS
                         } ?: true
                     }
                     .catch { Timber.e(it) }
