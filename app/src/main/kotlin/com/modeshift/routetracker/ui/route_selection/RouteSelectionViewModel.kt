@@ -47,12 +47,14 @@ class RouteSelectionViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
+            updateState { it.copy(isLoading = true) }
             repository.getRoutes()
                 .onSuccess { result ->
                     updateState { it.copy(routes = result.data) }
                 }.onFailure {
                     _events.trySend(ShowMessage(it.message))
                 }
+            updateState { it.copy(isLoading = false) }
         }
     }
 

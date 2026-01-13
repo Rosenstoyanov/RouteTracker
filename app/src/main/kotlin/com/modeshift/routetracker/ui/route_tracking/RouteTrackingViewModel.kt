@@ -7,6 +7,7 @@ import com.modeshift.routetracker.di.CoroutinesDispatcherProvider
 import com.modeshift.routetracker.domain.AppDataInitializer
 import com.modeshift.routetracker.domain.InitializationSate
 import com.modeshift.routetracker.domain.InitializationSate.Error
+import com.modeshift.routetracker.domain.InitializationSate.Idle
 import com.modeshift.routetracker.domain.InitializationSate.Initialized
 import com.modeshift.routetracker.domain.InitializationSate.Loading
 import com.modeshift.routetracker.domain.RouteTrackerRepository
@@ -73,6 +74,13 @@ class RouteTrackingViewModel @Inject constructor(
                             it.copy(
                                 appInitializedState = state,
                                 isLoading = true
+                            )
+                        }
+
+                        Idle -> updateState {
+                            it.copy(
+                                appInitializedState = state,
+                                isLoading = false
                             )
                         }
                     }

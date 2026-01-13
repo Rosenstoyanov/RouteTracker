@@ -165,6 +165,10 @@ private fun RouteTrackingContent(
 
                     uiState.selectedRoute != null -> {
                         Text(
+                            text = "Selected Route:",
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Text(
                             text = uiState.selectedRoute.name,
                             style = MaterialTheme.typography.titleLarge
                         )

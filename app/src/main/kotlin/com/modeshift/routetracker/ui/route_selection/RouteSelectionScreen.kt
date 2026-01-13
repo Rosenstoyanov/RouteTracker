@@ -71,6 +71,7 @@ private fun RouteSelectionContent(
                 goBack = { onAction(GoBack) },
             )
         },
+        showLoading = uiState.isLoading,
         snackBarHostState = snackBarHost
     ) {
         PullToRefreshBox(
@@ -89,11 +90,11 @@ private fun RouteSelectionContent(
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
                             .debounceClickable {
                                 onAction(RoadSelected(route.id))
-                            },
-                        text = route.name,
+                            }
+                            .padding(16.dp),
+                        text = route.toLabel(),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }

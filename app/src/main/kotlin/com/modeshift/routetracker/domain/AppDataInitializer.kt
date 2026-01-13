@@ -4,6 +4,7 @@ import com.modeshift.routetracker.core.models.onFailure
 import com.modeshift.routetracker.core.models.onSuccess
 import com.modeshift.routetracker.di.annotations.AppScope
 import com.modeshift.routetracker.domain.InitializationSate.Error
+import com.modeshift.routetracker.domain.InitializationSate.Idle
 import com.modeshift.routetracker.domain.InitializationSate.Initialized
 import com.modeshift.routetracker.domain.InitializationSate.Loading
 import kotlinx.coroutines.CoroutineScope
@@ -21,10 +22,11 @@ class AppDataInitializer @Inject constructor(
 ) {
     private var routesCached: Boolean? = null
     private var stopsCached: Boolean? = null
-    private val _state = MutableStateFlow<InitializationSate>(Loading)
+    private val _state = MutableStateFlow<InitializationSate>(Idle)
     val state = _state.asStateFlow()
 
     fun initialize() = appScope.launch {
+        _state.emit(Loading)
         routesCached = null
         stopsCached = null
         launch {
@@ -34,9 +36,11 @@ class AppDataInitializer @Inject constructor(
                     if (routesCached == true && stopsCached == true) {
                         _state.emit(Initialized)
                     } else if (stopsCached != null) {
-                        _state.emit(Error("Something went wrong"))
+                        emitError("Something went wrong")
                     }
-                }.onFailure { _state.emit(Error(it.message)) }
+                }.onFailure {
+                    emitError(it.message)
+                }
         }
         launch {
             repository.getStops()
@@ -45,14 +49,20 @@ class AppDataInitializer @Inject constructor(
                     if (routesCached == true && stopsCached == true) {
                         _state.emit(Initialized)
                     } else if (routesCached != null) {
-                        _state.emit(Error("Something went wrong"))
+                        emitError("Something went wrong")
                     }
-                }.onFailure { _state.emit(Error(it.message)) }
+                }.onFailure { emitError(it.message) }
         }
+    }
+
+    private suspend fun emitError(message: String) {
+        _state.emit(Error(message))
+        _state.emit(Idle)
     }
 }
 
 sealed interface InitializationSate {
+    data object Idle : InitializationSate
     data object Loading : InitializationSate
     data object Initialized : InitializationSate
     data class Error(val message: String) : InitializationSate

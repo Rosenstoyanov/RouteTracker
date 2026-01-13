@@ -43,6 +43,7 @@ class TrackLocationUseCase @Inject constructor(
                 } else {
                     EventType.Wrong
                 }
+                // TODO: Show app notification
                 repository.trackVisitedStopEvent(
                     it.toVisitedStopEvent(
                         appUser = appUserId,
