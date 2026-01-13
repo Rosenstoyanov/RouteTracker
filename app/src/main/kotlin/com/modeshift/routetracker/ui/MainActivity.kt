@@ -33,6 +33,7 @@ import com.modeshift.routetracker.ui.AppViewModel.AppUiState
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -74,6 +75,7 @@ class MainActivity : ComponentActivity() {
                                 route = appState.target,
                                 builder = withCleanStack()
                             )
+                            delay(200)
                             isInitialising = false
                         }
 

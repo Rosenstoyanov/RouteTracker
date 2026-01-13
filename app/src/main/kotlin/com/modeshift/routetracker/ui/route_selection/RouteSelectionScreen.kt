@@ -1,6 +1,7 @@
 package com.modeshift.routetracker.ui.route_selection
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -87,6 +88,7 @@ private fun RouteSelectionContent(
                 ) { route ->
                     Text(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .padding(16.dp)
                             .debounceClickable {
                                 onAction(RoadSelected(route.id))

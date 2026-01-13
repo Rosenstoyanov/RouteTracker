@@ -23,12 +23,8 @@ object DatabaseModule {
         val builder = Room.databaseBuilder(
             context = context,
             klass = RouteTrackerDatabase::class.java,
-            name = "remote_tracker.db"
-        ).fallbackToDestructiveMigration(true)
-
-//        if (Debug.isDebuggerConnected()) {
-//            builder.allowMainThreadQueries()
-//        }
+            name = RouteTrackerDatabase.DATABASE_NAME
+        )
 
         return builder.build()
     }

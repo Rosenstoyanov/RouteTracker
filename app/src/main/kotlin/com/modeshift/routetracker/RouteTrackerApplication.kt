@@ -4,9 +4,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import androidx.compose.ui.unit.Constraints
 import com.modeshift.routetracker.di.annotations.AppScope
 import com.modeshift.routetracker.domain.AppDataInitializer
+import com.modeshift.routetracker.event_sync.StopEventsSyncScheduler
 import com.modeshift.routetracker.utils.Constants
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +24,9 @@ class RouteTrackerApplication : Application() {
     @Inject
     lateinit var appDataInitializer: AppDataInitializer
 
+    @Inject
+    lateinit var stopEventsSyncScheduler: StopEventsSyncScheduler
+
 
     override fun onCreate() {
         super.onCreate()
@@ -32,6 +35,7 @@ class RouteTrackerApplication : Application() {
             Timber.plant(Timber.DebugTree())
         }
         setupNotificationChannel()
+        stopEventsSyncScheduler.scheduleDailyStopEventsUpload()
     }
 
 

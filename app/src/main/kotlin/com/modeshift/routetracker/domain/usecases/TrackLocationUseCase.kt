@@ -13,9 +13,9 @@ import kotlin.math.cos
 import kotlin.time.ExperimentalTime
 
 class TrackLocationUseCase @Inject constructor(
-    private val routeTrackerRepository: RouteTrackerRepository,
+    private val repository: RouteTrackerRepository,
     private val appUserNameStore: AppUserNameStore,
-    private val activeRouteStore: ActiveRouteStore
+    private val activeRouteStore: ActiveRouteStore,
 ) {
     // TODO: Check the business requirements if a bus is at location with multiple stops one right and several wrong
     @OptIn(ExperimentalTime::class)
@@ -29,7 +29,7 @@ class TrackLocationUseCase @Inject constructor(
         val minLng = currentLocation.longitude - lngDelta
         val maxLng = currentLocation.longitude + lngDelta
 
-        routeTrackerRepository.getStopsInArea(
+        repository.getStopsInArea(
             minLat = minLat,
             maxLat = maxLat,
             minLng = minLng,
@@ -42,7 +42,7 @@ class TrackLocationUseCase @Inject constructor(
                 } else {
                     EventType.Wrong
                 }
-                routeTrackerRepository.trackVisitedStopEvent(
+                repository.trackVisitedStopEvent(
                     it.toVisitedStopEvent(
                         appUser = appUserId,
                         evenType = evenType

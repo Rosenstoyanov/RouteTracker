@@ -7,9 +7,7 @@ import com.modeshift.routetracker.domain.InitializationSate.Error
 import com.modeshift.routetracker.domain.InitializationSate.Initialized
 import com.modeshift.routetracker.domain.InitializationSate.Loading
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AppDataInitializer @Inject constructor(
-    private val routeTrackerRepository: RouteTrackerRepository,
+    private val repository: RouteTrackerRepository,
     @AppScope
     private val appScope: CoroutineScope
 ) {
@@ -30,7 +28,7 @@ class AppDataInitializer @Inject constructor(
         routesCached = null
         stopsCached = null
         launch {
-            routeTrackerRepository.getRoutes()
+            repository.getRoutes()
                 .onSuccess {
                     routesCached = it.data.isNotEmpty()
                     if (routesCached == true && stopsCached == true) {
@@ -41,7 +39,7 @@ class AppDataInitializer @Inject constructor(
                 }.onFailure { _state.emit(Error(it.message)) }
         }
         launch {
-            routeTrackerRepository.getStops()
+            repository.getStops()
                 .onSuccess {
                     stopsCached = it.data.isNotEmpty()
                     if (routesCached == true && stopsCached == true) {

@@ -19,8 +19,10 @@ data class VisitedStopEventEntity(
     val stopId: Long,
     @Embedded(prefix = "location_")
     val location: Location,
-    @ColumnInfo("eventDateTime")
+    @ColumnInfo("event_date_time")
     val eventDateTime: Instant,
-    @ColumnInfo("evenType")
-    val evenType: EventType
+    @ColumnInfo("even_type")
+    val evenType: EventType,
+    @ColumnInfo("failure_count")
+    val failureCount: Long = 0
 )

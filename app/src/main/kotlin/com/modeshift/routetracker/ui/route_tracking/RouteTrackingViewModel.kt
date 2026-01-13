@@ -36,7 +36,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RouteTrackingViewModel @Inject constructor(
     private val navigator: Navigator,
-    private val routeTrackerRepository: RouteTrackerRepository,
+    private val repository: RouteTrackerRepository,
     private val logoutUseCase: LogoutUseCase,
     private val activeRouteStore: ActiveRouteStore,
     private val dispatcherProvider: CoroutinesDispatcherProvider,
@@ -80,7 +80,7 @@ class RouteTrackingViewModel @Inject constructor(
             }
             launch(dispatcherProvider.io) {
                 activeRouteStore.routeIdFlow().collectLatest {
-                    val route = routeTrackerRepository.getRouteBy(it)
+                    val route = repository.getRouteBy(it)
                     updateState { it.copy(selectedRoute = route) }
                 }
             }

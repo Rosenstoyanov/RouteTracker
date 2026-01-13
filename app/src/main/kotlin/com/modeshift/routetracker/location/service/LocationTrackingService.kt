@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import com.modeshift.routetracker.R
 import com.modeshift.routetracker.di.CoroutinesDispatcherProvider
 import com.modeshift.routetracker.domain.usecases.TrackLocationUseCase
+import com.modeshift.routetracker.event_sync.StopEventsSyncExecutor
+import com.modeshift.routetracker.event_sync.StopEventsSyncScheduler
 import com.modeshift.routetracker.location.LocationProvider
 import com.modeshift.routetracker.location.LocationServiceState.Running
 import com.modeshift.routetracker.location.LocationServiceState.Stopped
@@ -19,6 +21,7 @@ import com.modeshift.routetracker.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,6 +40,12 @@ class LocationTrackingService : LifecycleService() {
     @Inject
     lateinit var locationServiceStateEmitter: LocationServiceStateEmitter
 
+    @Inject
+    lateinit var stopEventsSyncScheduler: StopEventsSyncScheduler
+
+    @Inject
+    lateinit var stopEventsSyncExecutor: StopEventsSyncExecutor
+
     @Volatile
     private var lastLocation: Location? = null
     private var isRunning: Boolean = false
@@ -53,20 +62,21 @@ class LocationTrackingService : LifecycleService() {
             lifecycleScope.launch(dispatcherProvider.io) {
                 locationProvider.getLocationUpdates(1000)
                     .buffer(capacity = 100)
+                    .filter { currentLocation ->
+                        lastLocation?.distanceTo(currentLocation)?.let {
+                            it >= 200f
+                        } ?: true
+                    }
                     .catch { Timber.e(it) }
                     .collect { currentLocation ->
-                        val distanceToPreviousKnownLocation = lastLocation
-                            ?.distanceTo(currentLocation) ?: 0f
-                        val hasSignificantChange = distanceToPreviousKnownLocation >= 200f
-
-                        if (hasSignificantChange) {
-                            lastLocation = currentLocation
-                            trackLocationUseCase(currentLocation)
-                        }
+                        lastLocation = currentLocation
+                        trackLocationUseCase(currentLocation)
+                        stopEventsSyncExecutor.ensureRunning(this)
                     }
             }.invokeOnCompletion {
                 locationServiceStateEmitter.updateState(Stopped)
                 isRunning = false
+                stopEventsSyncScheduler.scheduleOneTimeRequest()
             }
         }
         return START_STICKY

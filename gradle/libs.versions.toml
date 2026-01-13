@@ -64,6 +64,7 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
 hilt-ext-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltExt" }
 hilt-ext-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltExt" }
+hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
 
 #Google
 google-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }

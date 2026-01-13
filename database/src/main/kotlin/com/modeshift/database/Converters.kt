@@ -7,7 +7,7 @@ import kotlin.time.ExperimentalTime
 
 class Converters {
 
-    // --- Converter for EventType (Enum) ---
+    // Converter for EventType
     @TypeConverter
     fun fromEventType(value: EventType?): String? {
         return value?.name
@@ -18,7 +18,7 @@ class Converters {
         return value?.let { EventType.valueOf(it) }
     }
 
-    // --- Converter for DateTime (Instant) ---
+    // Converter for Instant
     @OptIn(ExperimentalTime::class)
     @TypeConverter
     fun fromInstant(value: Instant?): String? {

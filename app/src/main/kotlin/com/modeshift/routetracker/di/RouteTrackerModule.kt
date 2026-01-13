@@ -14,5 +14,5 @@ interface RouteTrackerModule {
 
     @Binds
     @Singleton
-    fun bindRouteTrackerRepository(routeTrackerRepository: RouteTrackerRepositoryImpl): RouteTrackerRepository
+    fun bindRouteTrackerRepository(repository: RouteTrackerRepositoryImpl): RouteTrackerRepository
 }

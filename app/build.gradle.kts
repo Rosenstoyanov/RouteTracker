@@ -79,6 +79,7 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.ext.common)
     implementation(libs.hilt.ext.navigation.compose)
+    implementation(libs.hilt.ext.work)
     ksp(libs.hilt.ext.compiler)
 
     // Ktor

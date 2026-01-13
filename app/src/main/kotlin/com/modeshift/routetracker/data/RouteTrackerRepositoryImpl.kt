@@ -3,6 +3,7 @@ package com.modeshift.routetracker.data
 import com.modeshift.routetracker.core.models.Resource
 import com.modeshift.routetracker.core.models.Resource.Failure
 import com.modeshift.routetracker.core.models.Resource.Success
+import com.modeshift.routetracker.core.models.onFailure
 import com.modeshift.routetracker.core.models.onSuccess
 import com.modeshift.routetracker.data.local.LocalDataSource
 import com.modeshift.routetracker.data.local.mapers.toModel
@@ -14,6 +15,8 @@ import com.modeshift.routetracker.domain.models.Stop
 import com.modeshift.routetracker.domain.models.VisitedStopEvent
 import com.modeshift.routetracker.domain.models.mappers.toDto
 import com.modeshift.routetracker.domain.models.mappers.toEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -62,17 +65,6 @@ class RouteTrackerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sendVisitedStopEvents(visitedStopEvents: List<VisitedStopEvent>): Resource<Unit> {
-        return networkDataSource.sendVisitedStopEvent(visitedStopEvents.map { it.toDto() })
-            .onSuccess {
-                localDataSource.deleteVisitedStopEvents(visitedStopEvents.map { it.toEntity() })
-            }
-    }
-
-    override suspend fun trackVisitedStopEvent(visitedStopEvents: VisitedStopEvent) {
-        localDataSource.trackVisitedStopEvent(visitedStopEvents)
-    }
-
     override suspend fun getStopsInArea(
         minLat: Double,
         maxLat: Double,
@@ -80,5 +72,26 @@ class RouteTrackerRepositoryImpl @Inject constructor(
         maxLng: Double
     ): List<Stop> {
         return localDataSource.getStopsInArea(minLat, maxLat, minLng, maxLng).map { it.toModel() }
+    }
+
+    override suspend fun getVisitedStopEvents(): List<VisitedStopEvent> {
+        return localDataSource.getVisitedStopEvents().map { it.toModel() }
+    }
+
+    override suspend fun sendVisitedStopEvents(visitedStopEvents: List<VisitedStopEvent>): Resource<Unit> {
+        return networkDataSource.sendVisitedStopEvent(visitedStopEvents.map { it.toDto() })
+            .onSuccess {
+                localDataSource.deleteVisitedStopEvents(visitedStopEvents.map { it.toEntity() })
+            }.onFailure {
+                localDataSource.stopEventsSafeIncrementFailureCount(visitedStopEvents.map { it.id })
+            }
+    }
+
+    override suspend fun trackVisitedStopEvent(visitedStopEvents: VisitedStopEvent) {
+        localDataSource.trackVisitedStopEvent(visitedStopEvents)
+    }
+
+    override suspend fun visitedStopEventsFlow(limit: Long): Flow<List<VisitedStopEvent>> {
+        return localDataSource.visitedStopEventsFlow(limit).map { it.map { it.toModel() } }
     }
 }

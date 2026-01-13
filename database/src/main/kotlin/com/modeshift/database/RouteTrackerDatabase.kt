@@ -20,4 +20,9 @@ abstract class RouteTrackerDatabase : RoomDatabase() {
     abstract fun RoutesDao(): RoutesDao
     abstract fun StopsDao(): StopsDao
     abstract fun VisitedStopEventsDao(): VisitedStopEventsDao
+
+    companion object {
+        const val DATABASE_NAME = "remote_tracker.db"
+        const val MAX_ELEMENTS_IN_CLAUSE = 999
+    }
 }

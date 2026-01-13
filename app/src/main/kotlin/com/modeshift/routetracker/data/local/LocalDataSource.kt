@@ -7,11 +7,11 @@ import com.modeshift.database.entity.RouteEntity
 import com.modeshift.database.entity.StopEntity
 import com.modeshift.database.entity.VisitedStopEventEntity
 import com.modeshift.routetracker.di.annotations.AppScope
-import com.modeshift.routetracker.domain.models.Route
 import com.modeshift.routetracker.domain.models.VisitedStopEvent
 import com.modeshift.routetracker.domain.models.mappers.toEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -48,15 +48,6 @@ class LocalDataSource @Inject constructor(
         stopsDao.replaceAllStops(stops)
     }
 
-    suspend fun trackVisitedStopEvent(visitedStopEvent: VisitedStopEvent) = executeInAppScope {
-        visitedStopEventsDao.insert(visitedStopEvent.toEntity())
-    }
-
-    suspend fun deleteVisitedStopEvents(visitedStopEvents: List<VisitedStopEventEntity>) =
-        executeInAppScope {
-            visitedStopEventsDao.delete(visitedStopEvents)
-        }
-
     suspend fun getStopsInArea(
         minLat: Double,
         maxLat: Double,
@@ -66,6 +57,26 @@ class LocalDataSource @Inject constructor(
         return stopsDao.getStopsInArea(minLat, maxLat, minLng, maxLng)
     }
 
+    suspend fun trackVisitedStopEvent(visitedStopEvent: VisitedStopEvent) = executeInAppScope {
+        visitedStopEventsDao.insert(visitedStopEvent.toEntity())
+    }
+
+    suspend fun deleteVisitedStopEvents(visitedStopEvents: List<VisitedStopEventEntity>) =
+        executeInAppScope {
+            visitedStopEventsDao.delete(visitedStopEvents)
+        }
+
+    suspend fun getVisitedStopEvents(): List<VisitedStopEventEntity> {
+        return visitedStopEventsDao.getAll()
+    }
+
+    fun visitedStopEventsFlow(limit: Long): Flow<List<VisitedStopEventEntity>> {
+        return visitedStopEventsDao.visitedStopEventsFlow(limit)
+    }
+
+    suspend fun stopEventsSafeIncrementFailureCount(ids: List<Long>) = executeInAppScope {
+        visitedStopEventsDao.safeIncrementFailureCount(ids)
+    }
 
     private suspend fun <Result> executeInAppScope(block: suspend () -> Result) =
         appScope.async { block() }.await()

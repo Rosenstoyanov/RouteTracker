@@ -139,6 +139,7 @@ private fun RouteTrackingContent(
                 onLocationEnabled = {
                     showLocationNotEnabled = false
                     showLocationPermissionNotGranted = false
+                    onAction(Refresh)
                 }
             )
         } else {
@@ -171,6 +172,7 @@ private fun RouteTrackingContent(
                             text = uiState.selectedRoute.description,
                             style = MaterialTheme.typography.titleMedium
                         )
+                        Spacer(modifier = Modifier.padding(2.dp))
 
                         when (uiState.locationServiceState) {
                             Running -> Button(debounceClick { onAction(StopRoute) }) {

@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RouteSelectionViewModel @Inject constructor(
     private val navigator: Navigator,
-    private val routeTrackerRepository: RouteTrackerRepository,
+    private val repository: RouteTrackerRepository,
     private val activeRoadStore: ActiveRouteStore
 ) : BaseViewModel<RouteSelectionUiState, RouteSelectionAction>(RouteSelectionUiState()) {
 
@@ -47,7 +47,7 @@ class RouteSelectionViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch {
-            routeTrackerRepository.getRoutes()
+            repository.getRoutes()
                 .onSuccess { result ->
                     updateState { it.copy(routes = result.data) }
                 }.onFailure {
