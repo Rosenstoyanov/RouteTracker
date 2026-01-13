@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class StopDto(
     @SerialName("id")
     val id: Long,
-    @SerialName("route_id")
+    @SerialName("routeId")
     val routeId: Long,
     @SerialName("name")
     val name: String,

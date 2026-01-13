@@ -6,10 +6,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 
-
 class HttpRequestExecutor(
+    val json: Json,
     val httpClient: HttpClient,
     val networkConnectionMonitor: NetworkConnectionMonitor,
 ) {
@@ -21,8 +22,15 @@ class HttpRequestExecutor(
         }
 
         return try {
-            val response = httpClient.request { block() }
-            Resource.Success(response.body())
+            val rawResponse = httpClient.request { block() }.body<String>()
+
+            val unescapedJson = try {
+                json.decodeFromString<String>(rawResponse)
+            } catch (_: Exception) {
+                rawResponse
+            }
+            val response = json.decodeFromString<Data>(unescapedJson)
+            Resource.Success(response)
         } catch (exception: Exception) {
             Timber.e(exception)
             Resource.Failure("Something went wrong")

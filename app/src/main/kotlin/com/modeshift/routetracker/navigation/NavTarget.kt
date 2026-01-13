@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 sealed interface NavTarget {
 
     @Serializable
-    object Login : NavTarget
+    data object Login : NavTarget
 
     @Serializable
-    object RouteSelection : NavTarget
+    data object RouteSelection : NavTarget
 
     @Serializable
-    object RouteTracking : NavTarget
+    data object RouteTracking : NavTarget
 
     companion object {
         fun withCleanStack(

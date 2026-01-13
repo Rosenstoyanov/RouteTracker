@@ -37,6 +37,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -53,6 +54,7 @@ android {
 
 dependencies {
     implementation(project(":database"))
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     // AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -73,6 +75,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.lifecycle.service)
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.ext.common)
     implementation(libs.hilt.ext.navigation.compose)
@@ -101,6 +104,7 @@ dependencies {
     implementation(libs.google.location)
     implementation(libs.google.maps)
     implementation(libs.google.mapsUtils)
+    implementation(libs.google.accompanist.permissions)
 
     // Timber
     implementation(libs.timber)

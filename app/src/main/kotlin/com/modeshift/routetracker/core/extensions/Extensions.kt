@@ -1,14 +1,13 @@
 package com.modeshift.routetracker.core.extensions
 
-import com.google.android.gms.maps.model.LatLng
 import com.modeshift.models.Location
-import com.modeshift.routetracker.core.ui.models.StopPin
-import com.modeshift.routetracker.domain.models.Stop
 
-fun Location.toLatLng() = LatLng(latitude, longitude)
-
-fun Stop.toStopPin() = StopPin(
-    pinPosition = location.toLatLng(),
-    pinTitle = name,
-    stop = this
+fun android.location.Location.toModel() = Location(
+    latitude = latitude,
+    longitude = longitude
 )
+
+fun Location.toLocation() = android.location.Location("").apply {
+    latitude = this@apply.latitude
+    longitude = this@apply.longitude
+}

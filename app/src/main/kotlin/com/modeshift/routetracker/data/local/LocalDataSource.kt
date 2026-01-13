@@ -2,9 +2,14 @@ package com.modeshift.routetracker.data.local
 
 import com.modeshift.database.dao.RoutesDao
 import com.modeshift.database.dao.StopsDao
+import com.modeshift.database.dao.VisitedStopEventsDao
 import com.modeshift.database.entity.RouteEntity
 import com.modeshift.database.entity.StopEntity
+import com.modeshift.database.entity.VisitedStopEventEntity
 import com.modeshift.routetracker.di.annotations.AppScope
+import com.modeshift.routetracker.domain.models.Route
+import com.modeshift.routetracker.domain.models.VisitedStopEvent
+import com.modeshift.routetracker.domain.models.mappers.toEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import timber.log.Timber
@@ -15,12 +20,21 @@ import javax.inject.Singleton
 class LocalDataSource @Inject constructor(
     private val routesDao: RoutesDao,
     private val stopsDao: StopsDao,
+    private val visitedStopEventsDao: VisitedStopEventsDao,
     @AppScope
     private val appScope: CoroutineScope
 ) {
-    suspend fun getAllRoutes() = executeInAppScope { routesDao.getAllRoutes() }
+    suspend fun getAllRoutes(): List<RouteEntity> {
+        return routesDao.getAllRoutes()
+    }
 
-    suspend fun getAllStops() = executeInAppScope { stopsDao.getAllStops() }
+    suspend fun getRouteBy(id: Long): RouteEntity? {
+        return routesDao.getRouteBy(id)
+    }
+
+    suspend fun getAllStops(): List<StopEntity> {
+        return stopsDao.getAllStops()
+    }
 
     suspend fun replaceAllRoutes(routes: List<RouteEntity>) = executeInAppScope {
         try {
@@ -34,7 +48,25 @@ class LocalDataSource @Inject constructor(
         stopsDao.replaceAllStops(stops)
     }
 
+    suspend fun trackVisitedStopEvent(visitedStopEvent: VisitedStopEvent) = executeInAppScope {
+        visitedStopEventsDao.insert(visitedStopEvent.toEntity())
+    }
+
+    suspend fun deleteVisitedStopEvents(visitedStopEvents: List<VisitedStopEventEntity>) =
+        executeInAppScope {
+            visitedStopEventsDao.delete(visitedStopEvents)
+        }
+
+    suspend fun getStopsInArea(
+        minLat: Double,
+        maxLat: Double,
+        minLng: Double,
+        maxLng: Double
+    ): List<StopEntity> {
+        return stopsDao.getStopsInArea(minLat, maxLat, minLng, maxLng)
+    }
+
+
     private suspend fun <Result> executeInAppScope(block: suspend () -> Result) =
         appScope.async { block() }.await()
-
 }

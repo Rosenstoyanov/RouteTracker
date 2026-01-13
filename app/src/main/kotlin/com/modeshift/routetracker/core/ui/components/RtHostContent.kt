@@ -16,14 +16,11 @@ fun RtHostContent(
     snackBarHostState: SnackbarHostState = remember { SnackbarHostState() },
     showLoading: Boolean = false,
     topBar: @Composable () -> Unit = {},
-    floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit = {},
 ) {
-
     Scaffold(
         modifier = modifier,
         topBar = topBar,
-        floatingActionButton = floatingActionButton,
         snackbarHost = {
             SnackbarHost(
                 modifier = Modifier.imePadding(),
@@ -34,10 +31,9 @@ fun RtHostContent(
             Box {
                 content(paddingValues)
                 if (showLoading) {
-                    RtDimmedLoader()
+                    RtDimmedLoader(modifier = Modifier.matchParentSize())
                 }
             }
         }
     )
-
 }

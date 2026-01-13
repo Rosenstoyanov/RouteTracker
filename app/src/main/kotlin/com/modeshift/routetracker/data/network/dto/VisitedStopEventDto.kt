@@ -1,22 +1,22 @@
 package com.modeshift.routetracker.data.network.dto
 
 import com.modeshift.models.EventType
+import com.modeshift.routetracker.core.network.serializers.InstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import java.time.Instant
 
 @Serializable
-@OptIn(ExperimentalTime::class)
 data class VisitedStopEventDto(
     @SerialName("vehicleId")
     val appUser: String,
     @SerialName("stopId")
-    val stopId: String,
+    val stopId: Long,
     @SerialName("coordinates")
     val location: LocationDto,
+    @Serializable(with = InstantSerializer::class)
     @SerialName("eventDateTime")
-    val eventDateTime: Instant, // TODO: Add type converter sample: "2024-01-15T08:30:00Z"
+    val eventDateTime: Instant,
     @SerialName("evenType")
-    val evenType: EventType // TODO: Check weather a converter was needed
+    val evenType: EventType
 )

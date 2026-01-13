@@ -1,0 +1,61 @@
+package com.modeshift.routetracker.domain
+
+import com.modeshift.routetracker.core.models.onFailure
+import com.modeshift.routetracker.core.models.onSuccess
+import com.modeshift.routetracker.di.annotations.AppScope
+import com.modeshift.routetracker.domain.InitializationSate.Error
+import com.modeshift.routetracker.domain.InitializationSate.Initialized
+import com.modeshift.routetracker.domain.InitializationSate.Loading
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class AppDataInitializer @Inject constructor(
+    private val routeTrackerRepository: RouteTrackerRepository,
+    @AppScope
+    private val appScope: CoroutineScope
+) {
+    private var routesCached: Boolean? = null
+    private var stopsCached: Boolean? = null
+    private val _state = MutableStateFlow<InitializationSate>(Loading)
+    val state = _state.asStateFlow()
+
+    fun initialize() = appScope.launch {
+        routesCached = null
+        stopsCached = null
+        launch {
+            routeTrackerRepository.getRoutes()
+                .onSuccess {
+                    routesCached = it.data.isNotEmpty()
+                    if (routesCached == true && stopsCached == true) {
+                        _state.emit(Initialized)
+                    } else if (stopsCached != null) {
+                        _state.emit(Error("Something went wrong"))
+                    }
+                }.onFailure { _state.emit(Error(it.message)) }
+        }
+        launch {
+            routeTrackerRepository.getStops()
+                .onSuccess {
+                    stopsCached = it.data.isNotEmpty()
+                    if (routesCached == true && stopsCached == true) {
+                        _state.emit(Initialized)
+                    } else if (routesCached != null) {
+                        _state.emit(Error("Something went wrong"))
+                    }
+                }.onFailure { _state.emit(Error(it.message)) }
+        }
+    }
+}
+
+sealed interface InitializationSate {
+    data object Loading : InitializationSate
+    data object Initialized : InitializationSate
+    data class Error(val message: String) : InitializationSate
+}

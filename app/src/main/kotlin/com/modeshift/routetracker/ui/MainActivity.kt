@@ -1,5 +1,7 @@
 package com.modeshift.routetracker.ui
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.modeshift.routetracker.data.store.AppUserNameStore
 import com.modeshift.routetracker.core.BaseViewModel
 import com.modeshift.routetracker.core.ui.theme.RtTheme
@@ -41,6 +45,7 @@ class MainActivity : ComponentActivity() {
 
     private var isInitialising = true
 
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -74,6 +79,14 @@ class MainActivity : ComponentActivity() {
 
                         Initializing -> isInitialising = true
                     }
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val notificationPermissionState = rememberPermissionState(
+                        permission = Manifest.permission.POST_NOTIFICATIONS,
+                        onPermissionResult = {}
+                    )
+                    LaunchedEffect(Unit) { notificationPermissionState.launchPermissionRequest() }
                 }
 
                 AppNavigation(

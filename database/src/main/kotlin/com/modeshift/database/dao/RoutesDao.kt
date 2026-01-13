@@ -12,6 +12,9 @@ interface RoutesDao {
     @Query("SELECT * FROM Routes")
     suspend fun getAllRoutes(): List<RouteEntity>
 
+    @Query("SELECT * FROM Routes WHERE id = :id")
+    suspend fun getRouteBy(id: Long): RouteEntity?
+
     @Insert
     suspend fun insert(entities: List<RouteEntity>)
 

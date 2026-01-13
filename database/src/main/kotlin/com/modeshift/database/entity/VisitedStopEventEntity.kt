@@ -6,11 +6,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.modeshift.models.EventType
 import com.modeshift.models.Location
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import java.time.Instant
 
 @Entity(tableName = "VisitedStopEvents")
-@OptIn(ExperimentalTime::class)
 data class VisitedStopEventEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -18,7 +16,7 @@ data class VisitedStopEventEntity(
     @ColumnInfo("app_user")
     val appUser: String,
     @ColumnInfo("stop_id")
-    val stopId: String,
+    val stopId: Long,
     @Embedded(prefix = "location_")
     val location: Location,
     @ColumnInfo("eventDateTime")

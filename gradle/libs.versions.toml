@@ -22,6 +22,8 @@ timber = "5.0.1"
 playServicesLocation = "21.3.0"
 maps = "7.0.0"
 datastorePreferences = "1.2.0"
+lifecycleService = "2.10.0"
+accompanistPermissions = "0.37.3"
 
 [libraries]
 # AndroidX
@@ -67,6 +69,7 @@ hilt-ext-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation
 google-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 google-maps = { module = "com.google.maps.android:maps-compose", version.ref = "maps" }
 google-mapsUtils = { module = "com.google.maps.android:maps-compose-utils", version.ref = "maps" }
+google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 
 # Timber
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
@@ -87,6 +90,7 @@ ktor-client-plugin-logging = { group = "io.ktor", name = "ktor-client-logging" }
 ktor-client-plugin-contentNegotiation = { group = "io.ktor", name = "ktor-client-content-negotiation" }
 ktor-client-plugin-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
 ktor-client-plugin-contentEncoding = { group = "io.ktor", name = "ktor-client-encoding" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

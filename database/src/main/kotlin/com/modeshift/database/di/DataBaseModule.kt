@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.modeshift.database.RouteTrackerDatabase
 import com.modeshift.database.dao.RoutesDao
 import com.modeshift.database.dao.StopsDao
+import com.modeshift.database.dao.VisitedStopEventsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +24,7 @@ object DatabaseModule {
             context = context,
             klass = RouteTrackerDatabase::class.java,
             name = "remote_tracker.db"
-        )
+        ).fallbackToDestructiveMigration(true)
 
 //        if (Debug.isDebuggerConnected()) {
 //            builder.allowMainThreadQueries()
@@ -42,5 +43,11 @@ object DatabaseModule {
     @Provides
     fun provideStopsDao(db: RouteTrackerDatabase): StopsDao {
         return db.StopsDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideVisitedStopEventsDao(db: RouteTrackerDatabase): VisitedStopEventsDao {
+        return db.VisitedStopEventsDao()
     }
 }

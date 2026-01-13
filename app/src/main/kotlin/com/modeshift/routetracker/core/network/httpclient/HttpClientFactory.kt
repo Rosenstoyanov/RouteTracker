@@ -18,8 +18,9 @@ import kotlin.time.toJavaDuration
 
 object HttpClientFactory {
     fun createHttpClient(
+        json: Json,
         baseUrl: String? = null,
-        engine: HttpClientEngine = createDefaultEngine(),
+        engine: HttpClientEngine = createDefaultEngine()
     ): HttpClient {
         val client = HttpClient(engine) {
             expectSuccess = true
@@ -34,7 +35,7 @@ object HttpClientFactory {
                 retryIf(2) { _, response ->
                     when {
                         response.status.value in 500..599 -> true
-                        response.status == HttpStatusCode.Companion.TooManyRequests -> true
+                        response.status == HttpStatusCode.TooManyRequests -> true
                         else -> false
                     }
                 }
@@ -58,15 +59,7 @@ object HttpClientFactory {
             }
 
             install(ContentNegotiation) {
-                json(
-                    Json {
-                        prettyPrint = true
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                        encodeDefaults = true
-                        explicitNulls = false
-                    },
-                )
+                json(json)
             }
 
             install(ContentEncoding) {

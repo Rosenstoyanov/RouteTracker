@@ -23,4 +23,18 @@ interface StopsDao {
         deleteAllStops()
         insert(stops)
     }
+
+    @Query(
+        """
+    SELECT * FROM stops 
+    WHERE location_latitude BETWEEN :minLat AND :maxLat
+    AND location_longitude BETWEEN :minLng AND :maxLng
+    """
+    )
+    suspend fun getStopsInArea(
+        minLat: Double,
+        maxLat: Double,
+        minLng: Double,
+        maxLng: Double
+    ): List<StopEntity>
 }

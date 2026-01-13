@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,7 +30,7 @@ class AppUserNameStore @Inject constructor(
     suspend fun loadAppUserName(): String? {
         return context.userNameDataStore.data.map {
             it[userKey]
-        }.first()
+        }.firstOrNull()
     }
 
     suspend fun clear() {
