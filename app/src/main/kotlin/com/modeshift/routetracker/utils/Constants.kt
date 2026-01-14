@@ -2,6 +2,7 @@ package com.modeshift.routetracker.utils
 
 object Constants {
     const val DEFAULT_NOTIFICATION_CHANNEL_ID = "route_tracker_channel_default"
+    const val STOPS_REACHED_NOTIFICATION_CHANNEL_ID = "route_tracker_stops_reached_channel"
 
     // TODO: Can be extracted in FirebaseRemoteConfig if needed
     const val DELTA_RADIUS_TO_STOP_DB_LOOK_UP_IN_METERS = 1000

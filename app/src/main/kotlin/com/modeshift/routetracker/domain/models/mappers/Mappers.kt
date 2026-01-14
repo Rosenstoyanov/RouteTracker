@@ -23,6 +23,11 @@ fun Location.toDto() = LocationDto(
     longitude = longitude
 )
 
+fun Location.toLocation() = android.location.Location("").apply {
+    latitude = this@toLocation.latitude
+    longitude = this@toLocation.longitude
+}
+
 fun VisitedStopEvent.toDto() = VisitedStopEventDto(
     appUser = appUser,
     stopId = stopId,

@@ -34,13 +34,14 @@ class RouteTrackerApplication : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        setupNotificationChannel()
+        setupNotificationChannels()
         stopEventsSyncScheduler.scheduleDailyStopEventsUpload()
     }
 
 
-    private fun setupNotificationChannel() {
+    private fun setupNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager = getSystemService(NotificationManager::class.java)
             val serviceChannel = NotificationChannel(
                 Constants.DEFAULT_NOTIFICATION_CHANNEL_ID,
                 getString(R.string.default_notification_chanel),
@@ -49,8 +50,17 @@ class RouteTrackerApplication : Application() {
                 description = getString(R.string.default_channel_description)
             }
 
-            val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(serviceChannel)
+
+            val stopsReachedChannel = NotificationChannel(
+                Constants.STOPS_REACHED_NOTIFICATION_CHANNEL_ID,
+                getString(R.string.stops_reached_notification_chanel),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = getString(R.string.stops_reached_channel_description)
+            }
+
+            manager.createNotificationChannel(stopsReachedChannel)
         }
     }
 
