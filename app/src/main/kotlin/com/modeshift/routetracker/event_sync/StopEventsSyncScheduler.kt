@@ -17,9 +17,9 @@ import javax.inject.Singleton
 @Singleton
 class StopEventsSyncScheduler @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val appContext: Context
 ) {
-    private val workManager by lazy { WorkManager.getInstance(context) }
+    private val workManager by lazy { WorkManager.getInstance(appContext) }
 
     fun scheduleOneTimeRequest() {
         val constraints = Constraints.Builder()

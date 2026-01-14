@@ -5,7 +5,7 @@ import com.modeshift.models.Location
 import java.time.Instant
 
 data class VisitedStopEvent(
-    val id: Long = -1,
+    val id: Long = 0,
     val appUser: String,
     val stopId: Long,
     val location: Location,

@@ -28,9 +28,9 @@ class TrackLocationUseCase @Inject constructor(
     private val appUserNameStore: AppUserNameStore,
     private val activeRouteStore: ActiveRouteStore,
     @ApplicationContext
-    private val context: Context
+    private val appContext: Context
 ) {
-    private val notificationManager by lazy { NotificationManagerCompat.from(context) }
+    private val notificationManager by lazy { NotificationManagerCompat.from(appContext) }
 
     // TODO: Check the business requirements if a bus is at location with multiple stops one right and several wrong
     @OptIn(ExperimentalTime::class)
@@ -76,7 +76,7 @@ class TrackLocationUseCase @Inject constructor(
 
     private fun showStopVisitedNotification(stopName: String, eventType: EventType) {
         if (ActivityCompat.checkSelfPermission(
-                context,
+                appContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -86,11 +86,12 @@ class TrackLocationUseCase @Inject constructor(
             }
 
             val notification =
-                NotificationCompat.Builder(context, Constants.STOPS_REACHED_NOTIFICATION_CHANNEL_ID)
+                NotificationCompat.Builder(appContext, Constants.STOPS_REACHED_NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(icon)
                     .setContentTitle(title)
                     .setContentText("You just reached: $stopName")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setOngoing(false)
                     .setAutoCancel(true)
                     .build()
 

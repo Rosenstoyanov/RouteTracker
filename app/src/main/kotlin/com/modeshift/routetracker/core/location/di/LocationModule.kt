@@ -1,10 +1,10 @@
-package com.modeshift.routetracker.location.di
+package com.modeshift.routetracker.core.location.di
 
 import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.modeshift.routetracker.location.LocationProvider
-import com.modeshift.routetracker.location.LocationProviderImpl
+import com.modeshift.routetracker.core.location.LocationProvider
+import com.modeshift.routetracker.core.location.LocationProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,7 +23,7 @@ interface LocationModule {
         @Provides
         @Singleton
         fun provideFusedLocationProviderClient(
-            @ApplicationContext context: Context
-        ): FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
+            @ApplicationContext appContext: Context
+        ): FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(appContext)
     }
 }

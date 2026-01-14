@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class NetworkConnectionMonitorImpl @Inject constructor(
-    @ApplicationContext context: Context,
+    @ApplicationContext appContext: Context,
     private val networkRequest: NetworkRequest,
 ) : NetworkConnectionMonitor {
 
@@ -25,7 +25,7 @@ class NetworkConnectionMonitorImpl @Inject constructor(
     )
     override val networkConnectionStatus: StateFlow<NetworkConnectionStatus> = _networkStatus
     private val connectivityManager: ConnectivityManager by lazy {
-        context.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+        appContext.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
     }
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {

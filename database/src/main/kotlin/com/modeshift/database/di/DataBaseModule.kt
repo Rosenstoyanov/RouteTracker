@@ -19,9 +19,9 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideLoggingDatabase(@ApplicationContext context: Context): RouteTrackerDatabase {
+    fun provideLoggingDatabase(@ApplicationContext appContext: Context): RouteTrackerDatabase {
         val builder = Room.databaseBuilder(
-            context = context,
+            context = appContext,
             klass = RouteTrackerDatabase::class.java,
             name = RouteTrackerDatabase.DATABASE_NAME
         )

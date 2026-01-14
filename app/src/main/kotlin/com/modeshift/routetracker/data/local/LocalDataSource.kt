@@ -57,8 +57,8 @@ class LocalDataSource @Inject constructor(
         return stopsDao.getStopsInArea(minLat, maxLat, minLng, maxLng)
     }
 
-    suspend fun trackVisitedStopEvent(visitedStopEvent: VisitedStopEvent) = executeInAppScope {
-        visitedStopEventsDao.insert(visitedStopEvent.toEntity())
+    suspend fun trackVisitedStopEvent(visitedStopEvent: VisitedStopEventEntity) = executeInAppScope {
+        visitedStopEventsDao.insert(visitedStopEvent)
     }
 
     suspend fun deleteVisitedStopEvents(visitedStopEvents: List<VisitedStopEventEntity>) =

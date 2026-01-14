@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class AppUserNameStore @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val appContext: Context
 ) {
     private val userKey = stringPreferencesKey("user_name")
     private val Context.userNameDataStore by preferencesDataStore(
@@ -22,19 +22,19 @@ class AppUserNameStore @Inject constructor(
     )
 
     suspend fun storeUserName(name: String) {
-        context.userNameDataStore.edit {
+        appContext.userNameDataStore.edit {
             it[userKey] = name
         }
     }
 
     suspend fun loadAppUserName(): String? {
-        return context.userNameDataStore.data.map {
+        return appContext.userNameDataStore.data.map {
             it[userKey]
         }.firstOrNull()
     }
 
     suspend fun clear() {
-        context.userNameDataStore.edit {
+        appContext.userNameDataStore.edit {
             it.remove(userKey)
         }
     }

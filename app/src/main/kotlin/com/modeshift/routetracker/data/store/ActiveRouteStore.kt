@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class ActiveRouteStore @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val appContext: Context
 ) {
     private val routeIdKey = longPreferencesKey("active_route_id")
     private val Context.activeRouteIdDataStore by preferencesDataStore(
@@ -23,25 +23,25 @@ class ActiveRouteStore @Inject constructor(
     )
 
     suspend fun storeRouteId(routeId: Long) {
-        context.activeRouteIdDataStore.edit {
+        appContext.activeRouteIdDataStore.edit {
             it[routeIdKey] = routeId
         }
     }
 
     suspend fun routeId(): Long? {
-        return context.activeRouteIdDataStore.data.map {
+        return appContext.activeRouteIdDataStore.data.map {
             it[routeIdKey]
         }.firstOrNull()
     }
 
     fun routeIdFlow(): Flow<Long> {
-        return context.activeRouteIdDataStore.data.map {
+        return appContext.activeRouteIdDataStore.data.map {
             it[routeIdKey]
         }.filterNotNull()
     }
 
     suspend fun clear() {
-        context.activeRouteIdDataStore.edit {
+        appContext.activeRouteIdDataStore.edit {
             it.remove(routeIdKey)
         }
     }

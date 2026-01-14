@@ -4,6 +4,8 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
 import com.modeshift.routetracker.di.annotations.AppScope
 import com.modeshift.routetracker.domain.AppDataInitializer
 import com.modeshift.routetracker.event_sync.StopEventsSyncScheduler
@@ -15,7 +17,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class RouteTrackerApplication : Application() {
+class RouteTrackerApplication : Application(), Configuration.Provider {
 
     @Inject
     @AppScope
@@ -26,6 +28,9 @@ class RouteTrackerApplication : Application() {
 
     @Inject
     lateinit var stopEventsSyncScheduler: StopEventsSyncScheduler
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
 
 
     override fun onCreate() {
@@ -68,4 +73,10 @@ class RouteTrackerApplication : Application() {
         super.onTerminate()
         appScope.cancel()
     }
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .setMinimumLoggingLevel(android.util.Log.INFO)
+            .build()
 }

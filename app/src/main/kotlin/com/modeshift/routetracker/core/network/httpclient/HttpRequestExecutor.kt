@@ -24,6 +24,14 @@ class HttpRequestExecutor(
         return try {
             val rawResponse = httpClient.request { block() }.body<String>()
 
+            if (rawResponse.isBlank()) {
+                return if (Data::class == Unit::class) {
+                    Resource.Success(Unit as Data)
+                } else {
+                    Resource.Failure("Empty response body")
+                }
+            }
+
             val unescapedJson = try {
                 json.decodeFromString<String>(rawResponse)
             } catch (_: Exception) {

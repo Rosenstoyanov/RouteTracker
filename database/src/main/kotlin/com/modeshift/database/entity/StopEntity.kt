@@ -3,10 +3,16 @@ package com.modeshift.database.entity
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.modeshift.models.Location
 
-@Entity(tableName = "Stops")
+@Entity(
+    tableName = "Stops",
+    indices = [
+        Index(value = ["location_latitude", "location_longitude"])
+    ]
+)
 data class StopEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

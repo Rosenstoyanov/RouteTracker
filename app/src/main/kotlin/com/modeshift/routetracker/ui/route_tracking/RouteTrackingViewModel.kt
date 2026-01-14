@@ -1,7 +1,12 @@
 package com.modeshift.routetracker.ui.route_tracking
 
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.modeshift.routetracker.core.BaseViewModel
+import com.modeshift.routetracker.core.location.LocationServiceState
+import com.modeshift.routetracker.core.location.LocationServiceStateEmitter
 import com.modeshift.routetracker.data.store.ActiveRouteStore
 import com.modeshift.routetracker.di.CoroutinesDispatcherProvider
 import com.modeshift.routetracker.domain.AppDataInitializer
@@ -13,10 +18,9 @@ import com.modeshift.routetracker.domain.InitializationSate.Loading
 import com.modeshift.routetracker.domain.RouteTrackerRepository
 import com.modeshift.routetracker.domain.models.Route
 import com.modeshift.routetracker.domain.usecases.LogoutUseCase
-import com.modeshift.routetracker.location.LocationServiceState
-import com.modeshift.routetracker.location.LocationServiceStateEmitter
 import com.modeshift.routetracker.navigation.NavTarget.RouteSelection
 import com.modeshift.routetracker.navigation.Navigator
+import com.modeshift.routetracker.service.StopsTracingService
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.Logout
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.Refresh
@@ -24,10 +28,9 @@ import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.Route
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.StartRoute
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.StopRoute
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.ShowMessage
-import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.StartService
-import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.StopService
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -42,7 +45,9 @@ class RouteTrackingViewModel @Inject constructor(
     private val activeRouteStore: ActiveRouteStore,
     private val dispatcherProvider: CoroutinesDispatcherProvider,
     private val appDataInitializer: AppDataInitializer,
-    private val locationServiceStateEmitter: LocationServiceStateEmitter
+    private val locationServiceStateEmitter: LocationServiceStateEmitter,
+    @ApplicationContext
+    private val appContext: Context
 ) : BaseViewModel<RouteTrackingUiState, RouteTrackingAction>(RouteTrackingUiState()) {
 
     private val _events = Channel<RouteTrackingEvent>()
@@ -105,12 +110,14 @@ class RouteTrackingViewModel @Inject constructor(
             Logout -> logoutUseCase()
             Refresh -> appDataInitializer.initialize()
             SelectRoute -> navigator.navigate(RouteSelection)
-            StartRoute -> viewModelScope.launch {
-                _events.send(StartService)
+            StartRoute -> {
+                val intent = Intent(appContext, StopsTracingService::class.java)
+                ContextCompat.startForegroundService(appContext, intent)
             }
 
-            StopRoute -> viewModelScope.launch {
-                _events.send(StopService)
+            StopRoute -> {
+                val intent = Intent(appContext, StopsTracingService::class.java)
+                appContext.stopService(intent)
             }
         }
     }
@@ -132,7 +139,5 @@ class RouteTrackingViewModel @Inject constructor(
 
     sealed interface RouteTrackingEvent {
         data class ShowMessage(val message: String) : RouteTrackingEvent
-        data object StartService : RouteTrackingEvent
-        data object StopService : RouteTrackingEvent
     }
 }

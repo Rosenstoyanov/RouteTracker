@@ -16,6 +16,6 @@
     <string name="default_channel_description">This is the default chanel of Route Tracking App</string>
     <string name="stops_reached_notification_chanel">Route Tracking App Stops reached Channel</string>
     <string name="stops_reached_channel_description">This is used for displaying notifications when stops are reached</string>
-    <string name="location_tracking_notification_title">Location Tracking</string>
+    <string name="location_tracking_notification_title">Stops Tracking</string>
     <string name="location_tracking_notification_content">Tracking in progress...</string>
 </resources>

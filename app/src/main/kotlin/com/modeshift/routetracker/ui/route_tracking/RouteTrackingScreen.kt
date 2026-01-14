@@ -1,6 +1,5 @@
 package com.modeshift.routetracker.ui.route_tracking
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,13 +26,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.modeshift.routetracker.R
 import com.modeshift.routetracker.core.extensions.hasLocationPermission
 import com.modeshift.routetracker.core.extensions.isLocationEnabled
+import com.modeshift.routetracker.core.location.LocationServiceState.Running
+import com.modeshift.routetracker.core.location.LocationServiceState.Stopped
 import com.modeshift.routetracker.core.ui.components.RtAppBar
 import com.modeshift.routetracker.core.ui.components.RtHostContent
 import com.modeshift.routetracker.core.ui.components.location.LocationAvailabilityDetector
@@ -42,10 +42,9 @@ import com.modeshift.routetracker.core.ui.utils.ObserveAsEvents
 import com.modeshift.routetracker.core.ui.utils.RtPreview
 import com.modeshift.routetracker.core.ui.utils.RtResumeDetector
 import com.modeshift.routetracker.core.ui.utils.debounceClick
-import com.modeshift.routetracker.domain.InitializationSate
-import com.modeshift.routetracker.location.LocationServiceState.Running
-import com.modeshift.routetracker.location.LocationServiceState.Stopped
-import com.modeshift.routetracker.location.service.LocationTrackingService
+import com.modeshift.routetracker.domain.InitializationSate.Error
+import com.modeshift.routetracker.domain.InitializationSate.Idle
+import com.modeshift.routetracker.domain.InitializationSate.Loading
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.Logout
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.Refresh
@@ -54,8 +53,6 @@ import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.Route
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingAction.StopRoute
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.ShowMessage
-import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.StartService
-import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingEvent.StopService
 import com.modeshift.routetracker.ui.route_tracking.RouteTrackingViewModel.RouteTrackingUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -99,16 +96,6 @@ private fun RouteTrackingContent(
             is ShowMessage -> coroutineScope.launch {
                 snackBarHost.showSnackbar(it.message)
             }
-
-            StartService -> {
-                val intent = Intent(context, LocationTrackingService::class.java)
-                ContextCompat.startForegroundService(context, intent)
-            }
-
-            StopService -> {
-                val intent = Intent(context, LocationTrackingService::class.java)
-                context.stopService(intent)
-            }
         }
     }
 
@@ -151,7 +138,7 @@ private fun RouteTrackingContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 when {
-                    uiState.appInitializedState != InitializationSate.Initialized -> {
+                    uiState.appInitializedState == Idle || uiState.appInitializedState is Error -> {
                         Text(
                             modifier = Modifier.padding(16.dp),
                             text = stringResource(R.string.app_not_initialized),
@@ -161,6 +148,10 @@ private fun RouteTrackingContent(
                         Button(debounceClick { onAction(Refresh) }) {
                             Text(text = stringResource(R.string.initialize))
                         }
+                    }
+
+                    uiState.appInitializedState == Loading -> {
+
                     }
 
                     uiState.selectedRoute != null -> {

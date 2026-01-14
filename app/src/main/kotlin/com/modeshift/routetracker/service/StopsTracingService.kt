@@ -1,21 +1,21 @@
-package com.modeshift.routetracker.location.service
+package com.modeshift.routetracker.service
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+import android.content.pm.ServiceInfo
 import android.location.Location
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.modeshift.routetracker.R
+import com.modeshift.routetracker.core.location.LocationProvider
+import com.modeshift.routetracker.core.location.LocationServiceState
+import com.modeshift.routetracker.core.location.LocationServiceStateEmitter
 import com.modeshift.routetracker.di.CoroutinesDispatcherProvider
 import com.modeshift.routetracker.domain.usecases.TrackLocationUseCase
 import com.modeshift.routetracker.event_sync.StopEventsSyncExecutor
 import com.modeshift.routetracker.event_sync.StopEventsSyncScheduler
-import com.modeshift.routetracker.location.LocationProvider
-import com.modeshift.routetracker.location.LocationServiceState.Running
-import com.modeshift.routetracker.location.LocationServiceState.Stopped
-import com.modeshift.routetracker.location.LocationServiceStateEmitter
 import com.modeshift.routetracker.ui.MainActivity
 import com.modeshift.routetracker.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +28,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
-class LocationTrackingService : LifecycleService() {
+class StopsTracingService : LifecycleService() {
     @Inject
     lateinit var locationProvider: LocationProvider
 
@@ -55,12 +55,12 @@ class LocationTrackingService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         setForeground()
 
-        // TODO: If it is required check for mock location
+        // TODO: If it is required check for mock locations on production builds
         if (!isRunning) {
             isRunning = true
-            locationServiceStateEmitter.updateState(Running)
+            locationServiceStateEmitter.updateState(LocationServiceState.Running)
             lifecycleScope.launch(dispatcherProvider.io) {
-                locationProvider.getLocationUpdates(Constants.LOCATION_UPDATE_INTERVAL_IN_SECONDS.seconds.inWholeMilliseconds)
+                locationProvider.getLocationUpdates(Constants.LOCATION_UPDATE_INTERVAL_IN_MILLISECONDS.seconds.inWholeMilliseconds)
                     .buffer(capacity = Constants.LOCATION_UPDATE_BUFFER_CAPACITY)
                     .filter { currentLocation ->
                         lastLocation?.distanceTo(currentLocation)?.let {
@@ -74,7 +74,7 @@ class LocationTrackingService : LifecycleService() {
                         stopEventsSyncExecutor.ensureRunning(this)
                     }
             }.invokeOnCompletion {
-                locationServiceStateEmitter.updateState(Stopped)
+                locationServiceStateEmitter.updateState(LocationServiceState.Stopped)
                 isRunning = false
                 stopEventsSyncScheduler.scheduleOneTimeRequest()
             }
@@ -102,7 +102,11 @@ class LocationTrackingService : LifecycleService() {
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentIntent(pendingIntent)
                 .build()
-
-        startForeground(1, notification, FOREGROUND_SERVICE_TYPE_LOCATION)
+        ServiceCompat.startForeground(
+            this,
+            1,
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+        )
     }
 }
