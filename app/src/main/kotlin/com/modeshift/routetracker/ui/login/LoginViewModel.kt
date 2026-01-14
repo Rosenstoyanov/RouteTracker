@@ -1,8 +1,11 @@
 package com.modeshift.routetracker.ui.login
 
 import androidx.lifecycle.viewModelScope
-import com.modeshift.routetracker.data.store.AppUserNameStore
 import com.modeshift.routetracker.core.BaseViewModel
+import com.modeshift.routetracker.core.Validators.validateAppUserName
+import com.modeshift.routetracker.core.models.onFailure
+import com.modeshift.routetracker.core.models.onSuccess
+import com.modeshift.routetracker.data.store.AppUserNameStore
 import com.modeshift.routetracker.navigation.NavTarget.Companion.withCleanStack
 import com.modeshift.routetracker.navigation.NavTarget.RouteTracking
 import com.modeshift.routetracker.navigation.Navigator
@@ -23,21 +26,16 @@ class LoginViewModel @Inject constructor(
         when (action) {
             is OnLogin -> viewModelScope.launch {
                 val userName = action.username.trim()
-                when {
-                    userName.isEmpty() -> updateState {
-                        it.copy(userNameError = "Username cannot be empty")
-                    }
-
-                    !userName.matches(Regex("^\\p{L}+$")) -> updateState {
-                        it.copy(userNameError = "Username can only contain letters")
-                    }
-
-                    else -> {
-                        appUserNameStore.storeUserName(userName)
-                        navigator.navigate(
-                            navTarget = RouteTracking,
-                            builder = withCleanStack()
-                        )
+                validateAppUserName(userName).onSuccess {
+                    updateState { it.copy(userNameError = null) }
+                    appUserNameStore.storeUserName(userName)
+                    navigator.navigate(
+                        navTarget = RouteTracking,
+                        builder = withCleanStack()
+                    )
+                }.onFailure { error ->
+                    updateState {
+                        it.copy(userNameError = error.message)
                     }
                 }
             }

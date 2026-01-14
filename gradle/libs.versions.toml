@@ -24,6 +24,9 @@ maps = "7.0.0"
 datastorePreferences = "1.2.0"
 lifecycleService = "2.10.0"
 accompanistPermissions = "0.37.3"
+junitJupiter = "5.14.0"
+junit5 = "5.10.2"
+mockk = "1.14.7"
 
 [libraries]
 # AndroidX
@@ -79,6 +82,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 # Coroutines
 jetbrains-kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 jetbrains-kotlin-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
+jetbrains-kotlin-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
 
 # Serialization
 jetbrains-kotlin-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
@@ -92,6 +96,11 @@ ktor-client-plugin-contentNegotiation = { group = "io.ktor", name = "ktor-client
 ktor-client-plugin-kotlinx-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json" }
 ktor-client-plugin-contentEncoding = { group = "io.ktor", name = "ktor-client-encoding" }
 androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycleService" }
+junit-junit = { group = "junit", name = "junit", version = "4.13.2" }
+junit5-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
+junit5-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }
+junit5-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
+junit5-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junit5" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -102,4 +111,5 @@ jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+android-junit5 = { id = "de.mannodermaus.android-junit5", version = "1.10.0.0" }
 
