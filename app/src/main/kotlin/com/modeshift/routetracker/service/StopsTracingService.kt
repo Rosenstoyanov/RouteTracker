@@ -25,8 +25,11 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalAtomicApi::class)
 @AndroidEntryPoint
 class StopsTracingService : LifecycleService() {
     @Inject
@@ -49,15 +52,14 @@ class StopsTracingService : LifecycleService() {
 
     @Volatile
     private var lastLocation: Location? = null
-    private var isRunning: Boolean = false
+    private var isRunning: AtomicBoolean = AtomicBoolean(false)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         setForeground()
 
         // TODO: If it is required check for mock locations on production builds
-        if (!isRunning) {
-            isRunning = true
+        if (isRunning.compareAndSet(false, true)) {
             locationServiceStateEmitter.updateState(LocationServiceState.Running)
             lifecycleScope.launch(dispatcherProvider.io) {
                 locationProvider.getLocationUpdates(Constants.LOCATION_UPDATE_INTERVAL_IN_MILLISECONDS.seconds.inWholeMilliseconds)
@@ -75,7 +77,7 @@ class StopsTracingService : LifecycleService() {
                     }
             }.invokeOnCompletion {
                 locationServiceStateEmitter.updateState(LocationServiceState.Stopped)
-                isRunning = false
+                isRunning.store(false)
                 stopEventsSyncScheduler.scheduleOneTimeRequest()
             }
         }
